@@ -83,6 +83,11 @@
      "defaultValue": "80",
      "description": "HTTP port - leave as is.",
      "isOptional": false
+    },
+    "BASEROW_EXTRA_PUBLIC_URLS": {
+     "defaultValue": "http://healthcheck.railway.app",
+     "description": "Lets Railway's healthcheck reach the Baserow API instead of the published-sites router - leave as is (add more URLs comma-separated).",
+     "isOptional": false
     }
    }
   },
