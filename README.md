@@ -11,7 +11,7 @@ The stack is three services: Baserow, Postgres and Redis.
 - **Upstream's image, pinned.** Baserow runs the official all-in-one `baserow/baserow` image at a fixed release (2.4.1), not `latest`. A thin wrapper ([source](https://github.com/two-workspaces/baserow)) adds one start script and a seed script, nothing else.
 - **Admin on first boot, sign-up closed.** Migrations run first, then the admin is created from `BASEROW_ADMIN_EMAIL` and the generated `BASEROW_ADMIN_PASSWORD` and new sign-ups are switched off, so your public URL never offers an open registration page. Invite teammates from the workspace, or turn sign-ups back on in the Admin settings.
 - **External Postgres and Redis.** The bundled database and Redis are off. Your data lives in a dedicated Postgres 17 service and the job queue in Redis, both on the private network only.
-- **Sized for Railway.** The image runs in its minimal mode (one combined Celery worker) with two web workers, which keeps memory at about RAM_TOTAL for the whole stack when idle.
+- **Sized for Railway.** The image runs in its minimal mode (one combined Celery worker) with two web workers, which keeps the stack at about 1.6 GB of RAM when idle (Baserow 1.5 GB, Postgres 100 MB, Redis 15 MB). That is above the Free plan's limit, so use Hobby or higher.
 - **Files on a volume.** Uploaded files and images are stored on a volume at `/baserow/data` and served from your domain.
 
 ## Common Use Cases
@@ -39,7 +39,7 @@ The stack is three services: Baserow, Postgres and Redis.
 
 **Sign in.** Open your Baserow domain and sign in with `BASEROW_ADMIN_EMAIL` and the password in the Baserow service's `BASEROW_ADMIN_PASSWORD` variable. The variables are only read on the first boot; change the password in Baserow afterwards (Settings, Password).
 
-**Email.** Invitations and password resets need SMTP, and Railway only allows outbound SMTP on the Pro plan. To send, set `EMAIL_SMTP=true`, `EMAIL_SMTP_HOST`, `EMAIL_SMTP_PORT`, `EMAIL_SMTP_USER`, `EMAIL_SMTP_PASSWORD`, `EMAIL_SMTP_USE_TLS` and `FROM_EMAIL` on the Baserow service. Without SMTP, invite people from the workspace and share the invite link yourself.
+**Email.** Invitations and password resets need SMTP, and Railway only allows outbound SMTP on the Pro plan. To send, set `EMAIL_SMTP=true`, `EMAIL_SMTP_HOST`, `EMAIL_SMTP_PORT`, `EMAIL_SMTP_USER`, `EMAIL_SMTP_PASSWORD`, `EMAIL_SMTP_USE_TLS` and `FROM_EMAIL` on the Baserow service. Without SMTP, Baserow prints every email it would send, invitation links included, to the Baserow service's deploy logs, so you can copy an invite link from there.
 
 **Custom domains.** Add the domain to the Baserow service in Railway, then set `BASEROW_PUBLIC_URL` to `https://your.domain` and redeploy.
 
