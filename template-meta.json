@@ -1,0 +1,8 @@
+{
+  "name": "Baserow | Open-Source Airtable Alternative with Postgres & Redis",
+  "short_name": "Baserow Database",
+  "description": "No-code database and app builder on Postgres, admin created on boot",
+  "category": "Other",
+  "image": "https://raw.githubusercontent.com/two-workspaces/baserow/main/icon.svg",
+  "card_desc": "Baserow: open-source no-code database, Airtable alternative. Runs Baserow 2.4.1 on its own Postgres and Redis, with the admin created on first boot and public sign-up closed."
+}

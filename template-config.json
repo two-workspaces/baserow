@@ -1,0 +1,164 @@
+{
+ "buckets": {},
+ "services": {
+  "4e69a0f0-ef94-4f0d-8a4a-97870edeaed0": {
+   "icon": "https://raw.githubusercontent.com/two-workspaces/baserow/main/icon.svg",
+   "name": "Baserow",
+   "build": {
+    "dockerfilePath": "Dockerfile"
+   },
+   "deploy": {
+    "startCommand": null,
+    "healthcheckPath": "/api/_health/",
+    "healthcheckTimeout": 900,
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 10
+   },
+   "source": {
+    "repo": "https://github.com/two-workspaces/baserow",
+    "rootDirectory": null
+   },
+   "networking": {
+    "serviceDomains": {
+     "<hasDomain>": {}
+    }
+   },
+   "volumeMounts": {
+    "9a55fd8b-089c-4a9d-8ba0-e100b2ec9a31": {
+     "mountPath": "/baserow/data"
+    }
+   },
+   "variables": {
+    "BASEROW_ADMIN_EMAIL": {
+     "defaultValue": "",
+     "description": "Email of the admin account, created on the first boot. You sign in with it.",
+     "isOptional": false
+    },
+    "BASEROW_ADMIN_PASSWORD": {
+     "defaultValue": "${{secret(24, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\")}}",
+     "description": "Admin password, generated at deploy time and used on the first boot only. Change it in Baserow afterwards (My settings, Password).",
+     "isOptional": false
+    },
+    "BASEROW_PUBLIC_URL": {
+     "defaultValue": "https://${{RAILWAY_PUBLIC_DOMAIN}}",
+     "description": "Public URL of Baserow. Change it when you add a custom domain.",
+     "isOptional": false
+    },
+    "SECRET_KEY": {
+     "defaultValue": "${{secret(50, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\")}}",
+     "description": "Django secret key. Changing it signs everyone out.",
+     "isOptional": false
+    },
+    "BASEROW_JWT_SIGNING_KEY": {
+     "defaultValue": "${{secret(50, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\")}}",
+     "description": "Signs login tokens. Changing it signs everyone out.",
+     "isOptional": false
+    },
+    "DATABASE_URL": {
+     "defaultValue": "postgresql://${{Postgres.POSTGRES_USER}}:${{Postgres.POSTGRES_PASSWORD}}@${{Postgres.RAILWAY_PRIVATE_DOMAIN}}:5432/${{Postgres.POSTGRES_DB}}",
+     "description": "Postgres connection (private network)",
+     "isOptional": false
+    },
+    "REDIS_URL": {
+     "defaultValue": "redis://default:${{Redis.REDIS_PASSWORD}}@${{Redis.RAILWAY_PRIVATE_DOMAIN}}:6379",
+     "description": "Redis connection for Celery, cache and real-time updates (private network)",
+     "isOptional": false
+    },
+    "BASEROW_RUN_MINIMAL": {
+     "defaultValue": "yes",
+     "description": "Runs one combined Celery worker instead of three to save memory. Set to empty for busy teams.",
+     "isOptional": false
+    },
+    "BASEROW_AMOUNT_OF_GUNICORN_WORKERS": {
+     "defaultValue": "2",
+     "description": "Backend web workers. Raise it for many concurrent users.",
+     "isOptional": false
+    },
+    "BASEROW_CADDY_ADDRESSES": {
+     "defaultValue": ":80",
+     "description": "Address the bundled Caddy listens on - leave as is.",
+     "isOptional": false
+    },
+    "PORT": {
+     "defaultValue": "80",
+     "description": "HTTP port - leave as is.",
+     "isOptional": false
+    }
+   }
+  },
+  "0464ed6f-56cf-4d32-8443-7a852604479b": {
+   "icon": "https://devicons.railway.com/i/redis.svg",
+   "name": "Redis",
+   "build": {},
+   "deploy": {
+    "startCommand": "/bin/sh -c \"exec docker-entrypoint.sh redis-server --requirepass $REDIS_PASSWORD\"",
+    "healthcheckPath": null,
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 10
+   },
+   "source": {
+    "image": "redis:8.2.3-alpine"
+   },
+   "networking": {
+    "serviceDomains": {}
+   },
+   "volumeMounts": {},
+   "variables": {
+    "REDIS_PASSWORD": {
+     "defaultValue": "${{secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\")}}",
+     "description": "Auto-generated Redis password",
+     "isOptional": false
+    }
+   }
+  },
+  "e41af65a-9f62-4bc8-b854-ccf4da36b589": {
+   "icon": "https://devicons.railway.app/i/postgresql.svg",
+   "name": "Postgres",
+   "build": {},
+   "deploy": {
+    "startCommand": null,
+    "healthcheckPath": null,
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 10
+   },
+   "source": {
+    "image": "postgres:17.11-alpine"
+   },
+   "networking": {
+    "serviceDomains": {}
+   },
+   "volumeMounts": {
+    "97fd0686-23e8-45e5-b9e9-f844f1e3e400": {
+     "mountPath": "/var/lib/postgresql/data"
+    }
+   },
+   "variables": {
+    "POSTGRES_DB": {
+     "defaultValue": "baserow",
+     "description": "Database name",
+     "isOptional": false
+    },
+    "POSTGRES_USER": {
+     "defaultValue": "baserow",
+     "description": "Database user",
+     "isOptional": false
+    },
+    "POSTGRES_PASSWORD": {
+     "defaultValue": "${{secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\")}}",
+     "description": "Auto-generated database password",
+     "isOptional": false
+    },
+    "PGDATA": {
+     "defaultValue": "/var/lib/postgresql/data/pgdata",
+     "description": "Data subdirectory - keeps Postgres happy on Railway volumes",
+     "isOptional": false
+    },
+    "RAILWAY_DEPLOYMENT_DRAINING_SECONDS": {
+     "defaultValue": "60",
+     "description": "Time for Postgres to shut down cleanly on redeploy",
+     "isOptional": false
+    }
+   }
+  }
+ }
+}
